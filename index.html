@@ -6,69 +6,154 @@
   <title>易經籌策占卦</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f9f6f1 url("https://www.transparenttextures.com/patterns/old-wall.png");
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 30px;
+    }
+
+    .scroll-container {
+      background: #fffaf3;
+      border-left: 12px solid #c9a26b;
+      border-right: 12px solid #c9a26b;
+      border-radius: 12px;
+      margin: 30px 20px;
+      padding: 30px 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+      align-items: center;
+    }
+
+    h2 {
+      margin-top: 40px;
+      color: #5a3e1b;
+      font-size: 1.8em;
+      letter-spacing: 2px;
+    }
+
+    .main-card {
+      background: #fffaf2;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      padding: 25px 30px;
+      margin-top: 20px;
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
     }
 
     #horizontal-stick {
       width: 150px;
       height: 7px;
-      background-color: #654321;
-      margin-bottom: 20px;
+      background: linear-gradient(to right, #5a3e1b, #8b5a2b);
+      margin: 20px auto;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     #container {
       display: flex;
-      gap: 2px;
-      user-select: none;
-      width: 90%;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 3px;
       margin-bottom: 20px;
+      user-select: none;
     }
 
     .stick {
       width: 7px;
-      background-color: #654321;
+      height: 150px;
+      background: linear-gradient(to top, #5a3e1b, #8b5a2b);
       border-radius: 4px;
-      transition: transform 0.3s;
+      transition: transform 0.3s, background-color 0.3s;
       transform: rotate(var(--angle));
       margin-top: var(--mt);
-      height: 150px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       margin-left: -5px;
     }
 
     .left {
       transform: translateX(-10px) rotate(var(--angle));
-      /* background-color: #CD853F; */
+      background-color: #c08a52;
     }
 
     .right {
       transform: translateX(10px) rotate(var(--angle));
-      /* background-color: #D2691E; */
-    }
-
-    #yao-status {
-      margin-bottom: 10px;
-      font-weight: bold;
+      background-color: #a86f3b;
     }
 
     #status {
-      margin-bottom: 10px;
       font-weight: bold;
+      color: #5a3e1b;
+      margin-bottom: 5px;
+    }
+
+    #count {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #8b5a2b;
+      color: white;
+      font-size: 0.95em;
+      margin: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #a56c3e;
+      transform: scale(1.03);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .yin_yao,
+    .yang_yao {
+      display: inline-block;
+      height: 10px;
+      width: 80px;
+      margin: 2px 0;
+    }
+
+    .yin_yao {
+      background-image: linear-gradient(to right, #070606 0 35%, transparent 35% 65%, #070606 65% 100%);
+    }
+
+    .yang_yao {
+      background-color: #070606;
+    }
+
+    #hexagram-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #8B4513;
+      margin-top: 20px;
     }
 
     #log {
       white-space: pre-line;
-      font-size: 0.9em;
-      max-width: 90%;
-      margin-bottom: 10px;
+      font-size: 0.85em;
+      text-align: left;
+      margin-top: 10px;
+      color: #555;
+      background-color: #fdf8f1;
+      border-left: 3px solid #d2a679;
+      padding: 10px;
+      border-radius: 6px;
     }
 
     #result {
@@ -77,56 +162,28 @@
       max-width: 90%;
       margin-bottom: 10px;
     }
-
-    .yin_yao {
-      width: 80px;
-      height: 10px;
-      background-image: linear-gradient(to right, #070606 0 35%, transparent 35% 65%, #070606 65% 100%);
-      background-color: transparent;
-      margin-bottom: 2px;
-      display: inline-block;
-    }
-
-    .yang_yao {
-      width: 80px;
-      height: 10px;
-      background-color: #070606;
-      margin-bottom: 2px;
-      display: inline-block;
-    }
-
-    button {
-      padding: 6px 12px;
-      margin: 4px;
-    }
-
-    #hexagram-name {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #8B4513;
-      margin: 20px 0;
-    }
   </style>
 </head>
 
 <body>
   <h2>易經籌策占卦</h2>
 
-  <div id="yao-status">取得第 1 爻</div><br>
-  任意點擊，將籌策分為兩堆<br><br>
-  <div id="horizontal-stick"></div>
-  <div id="container"></div>
-  <div id="status">第 1 輪</div>
-  <div id="count">左側：0，右側：0</div>
-  <button id="nextStageBtn" disabled>下一輪</button>
-  <button id="nextRoundBtn" style="display:none">下一爻</button>
+  <div class="scroll-container">
+    任意點擊下方籌策，將籌策分為兩堆<br><br>
+    <div id="horizontal-stick"></div>
+    <div id="container"></div>
+    <div id="status">第 1 輪</div>
+    <div id="count" style="display:none">左側：0，右側：0</div>
+    <button id="nextStageBtn" disabled>下一輪</button>
+    <button id="nextRoundBtn" style="display:none">下一爻</button>
+  </div>
+
   <div id="result"></div>
   <div id="log" style="display:none"></div>
   <div id="hexagram-name"></div>
 
   <script>
     const container = document.getElementById('container');
-    const yaoStatus = document.getElementById('yao-status');
     const status = document.getElementById('status');
     const countDiv = document.getElementById('count');
     const logDiv = document.getElementById('log');
@@ -152,8 +209,7 @@
     }
 
     function updateStatus() {
-      yaoStatus.textContent = `取得第 ${roundIndex + 1} 爻`;
-      status.textContent = `第 ${stageIndex + 1} 輪`;
+      status.textContent = `第 ${roundIndex + 1} 爻，第 ${stageIndex + 1} 輪`;
     }
 
     function handleSplit(e) {
@@ -259,7 +315,17 @@
         }
 
         const hexagramName = getYaoName();
-        hexagramNameDiv.innerHTML = `<strong>本卦：${hexagramName}</strong>`;
+        // hexagramNameDiv.innerHTML = `<strong>本卦：${hexagramName}</strong>`;
+        const hexagramFile = hexagramName ? hexagramName.replace(/\s/g, '') + '.html' : null;
+        if (hexagramFile) {
+          hexagramNameDiv.innerHTML = `
+      <strong>本卦：</strong>
+      <a href="hexagrams/${hexagramFile}" target="_blank" class="hexagram-link">
+        ${hexagramName}
+      </a>`;
+        } else {
+          hexagramNameDiv.innerHTML = `<strong>本卦：未知卦象</strong>`;
+        }
       }
 
       function getYaoSymbol(value) {
@@ -303,7 +369,7 @@
           巽: '風'
         }
 
-        yao_name_dict = {'111111': '乾', '000000': '坤', '100010': '水雷屯', '010001': '山水蒙', '111010': '水天需', '010111': '天水訟', '010000': '地水師', '000010': '水地比', '111011': '風天小畜', '110111': '天澤履', '111000': '地天泰', '000111': '天地否', '101111': '天火同人', '111101': '火天大有', '001000': '地山謙', '000100': '雷地豫', '100110': '澤雷隨', '011001': '山風蠱', '110000': '地澤臨', '000011': '風地觀', '100101': '火雷噬嗑', '101001': '山火賁', '000001': '山地剝', '100000': '地雷復', '100111': '天雷無妄', '111001': '山天大畜', '100001': '山雷頤', '011110': '澤風大過', '010010': '坎', '101101': '離', '001110': '澤山咸', '011100': '雷風恆', '001111': '天山遯', '111100': '雷天大壯', '000101': '火地晉', '101000': '地火明夷', '101011': '風火家人', '110101': '火澤睽', '001010': '水山蹇', '010100': '雷水解', '110001': '山澤損', '100011': '風雷益', '111110': '澤天夬', '011111': '天風姤', '000110': '澤地萃', '011000': '地風升', '010110': '澤水困', '011010': '水風井', '101110': '澤火革', '011101': '火風鼎', '100100': '震', '001001': '艮', '001011': '風山漸', '110100': '雷澤歸妹', '101100': '雷火豐', '001101': '火山旅', '011011': '巽', '110110': '兌', '010011': '風水渙', '110010': '水澤節', '110011': '風澤中孚', '001100': '雷山小過', '101010': '水火既濟', '010101': '火水未濟'};
+        yao_name_dict = { '111111': '乾', '000000': '坤', '100010': '水雷屯', '010001': '山水蒙', '111010': '水天需', '010111': '天水訟', '010000': '地水師', '000010': '水地比', '111011': '風天小畜', '110111': '天澤履', '111000': '地天泰', '000111': '天地否', '101111': '天火同人', '111101': '火天大有', '001000': '地山謙', '000100': '雷地豫', '100110': '澤雷隨', '011001': '山風蠱', '110000': '地澤臨', '000011': '風地觀', '100101': '火雷噬嗑', '101001': '山火賁', '000001': '山地剝', '100000': '地雷復', '100111': '天雷無妄', '111001': '山天大畜', '100001': '山雷頤', '011110': '澤風大過', '010010': '坎', '101101': '離', '001110': '澤山咸', '011100': '雷風恆', '001111': '天山遯', '111100': '雷天大壯', '000101': '火地晉', '101000': '地火明夷', '101011': '風火家人', '110101': '火澤睽', '001010': '水山蹇', '010100': '雷水解', '110001': '山澤損', '100011': '風雷益', '111110': '澤天夬', '011111': '天風姤', '000110': '澤地萃', '011000': '地風升', '010110': '澤水困', '011010': '水風井', '101110': '澤火革', '011101': '火風鼎', '100100': '震', '001001': '艮', '001011': '風山漸', '110100': '雷澤歸妹', '101100': '雷火豐', '001101': '火山旅', '011011': '巽', '110110': '兌', '010011': '風水渙', '110010': '水澤節', '110011': '風澤中孚', '001100': '雷山小過', '101010': '水火既濟', '010101': '火水未濟' };
         return yao_name_dict[yao_val];
       }
 
