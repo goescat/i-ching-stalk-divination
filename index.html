@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>易經籌策占卦</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    #horizontal-stick {
+      width: 150px;
+      height: 7px;
+      background-color: #654321;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    #container {
+      display: flex;
+      gap: 2px;
+      user-select: none;
+      width: 90%;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .stick {
+      width: 7px;
+      background-color: #654321;
+      border-radius: 4px;
+      transition: transform 0.3s;
+      transform: rotate(var(--angle));
+      margin-top: var(--mt);
+      height: 150px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      margin-left: -5px;
+    }
+
+    .left {
+      transform: translateX(-10px) rotate(var(--angle));
+      /* background-color: #CD853F; */
+    }
+
+    .right {
+      transform: translateX(10px) rotate(var(--angle));
+      /* background-color: #D2691E; */
+    }
+
+    #yao-status {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #status {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    #log {
+      white-space: pre-line;
+      font-size: 0.9em;
+      max-width: 90%;
+      margin-bottom: 10px;
+    }
+
+    #result {
+      white-space: pre-line;
+      font-size: 0.9em;
+      max-width: 90%;
+      margin-bottom: 10px;
+    }
+
+    .yin_yao {
+      width: 80px;
+      height: 10px;
+      background-image: linear-gradient(to right, #070606 0 35%, transparent 35% 65%, #070606 65% 100%);
+      background-color: transparent;
+      margin-bottom: 2px;
+      display: inline-block;
+    }
+
+    .yang_yao {
+      width: 80px;
+      height: 10px;
+      background-color: #070606;
+      margin-bottom: 2px;
+      display: inline-block;
+    }
+
+    button {
+      padding: 6px 12px;
+      margin: 4px;
+    }
+
+    #hexagram-name {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #8B4513;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>易經籌策占卦</h2>
+
+  <div id="yao-status">取得第 1 爻</div><br>
+  任意點擊，將籌策分為兩堆<br><br>
+  <div id="horizontal-stick"></div>
+  <div id="container"></div>
+  <div id="status">第 1 輪</div>
+  <div id="count">左側：0，右側：0</div>
+  <button id="nextStageBtn" disabled>下一輪</button>
+  <button id="nextRoundBtn" style="display:none">下一爻</button>
+  <div id="result"></div>
+  <div id="log" style="display:none"></div>
+  <div id="hexagram-name"></div>
+
+  <script>
+    const container = document.getElementById('container');
+    const yaoStatus = document.getElementById('yao-status');
+    const status = document.getElementById('status');
+    const countDiv = document.getElementById('count');
+    const logDiv = document.getElementById('log');
+    const nextStageBtn = document.getElementById('nextStageBtn');
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
+    const hexagramNameDiv = document.getElementById('hexagram-name');
+
+    let yao = {};
+    let roundIndex = 0;
+    let stageIndex = 0;
+    let left = 0, right = 0;
+    const results = [];
+
+    function generateSticks(n) {
+      container.innerHTML = '';
+      for (let i = 0; i < n; i++) {
+        const stick = document.createElement('div');
+        stick.classList.add('stick');
+        stick.style.setProperty('--angle', `${(Math.random() - 0.5) * 12}deg`);
+        stick.style.setProperty('--mt', `${Math.random() * 20}px`);
+        container.appendChild(stick);
+      }
+    }
+
+    function updateStatus() {
+      yaoStatus.textContent = `取得第 ${roundIndex + 1} 爻`;
+      status.textContent = `第 ${stageIndex + 1} 輪`;
+    }
+
+    function handleSplit(e) {
+      const clickX = e.clientX;
+      const sticks = Array.from(document.querySelectorAll('.stick'));
+      left = 0;
+      right = 0;
+
+      sticks.forEach(stick => {
+        const rect = stick.getBoundingClientRect();
+        const midX = (rect.left + rect.right) / 2;
+        stick.classList.remove('left', 'right');
+        if (midX < clickX) {
+          stick.classList.add('left');
+          left++;
+        } else {
+          stick.classList.add('right');
+          right++;
+        }
+      });
+
+      if (left === 0 || right === 0) {
+        sticks.forEach(stick => {
+          stick.classList.remove('left', 'right');
+        });
+        countDiv.textContent = `左側：0，右側：0`;
+        return; // 不進行下一步
+      }
+
+      countDiv.textContent = `左側：${left}，右側：${right}`;
+
+      // 如果是第三輪，直接執行 nextStage() 並顯示「下一爻」按鈕
+      if (stageIndex === 2) {
+        nextStage();
+      }
+      else {
+        nextStageBtn.disabled = false;
+      }
+      container.removeEventListener('click', handleSplit);
+    }
+
+    function reduceGroup(count, isLeft) {
+      let c = isLeft ? count - 1 : count;
+      if (c % 4 === 0) {
+        c -= 4;
+      }
+      c -= c % 4;
+      return Math.max(c / 4, 0);
+    }
+
+    function nextStage() {
+      const groupLeft = reduceGroup(left, true);
+      const groupRight = reduceGroup(right, false);
+      logDiv.textContent += `第 ${stageIndex + 1} 輪：左 ${left} -> ${groupLeft} 組，右 ${right} -> ${groupRight} 組\n`;
+
+      // 下一輪數量變成剩餘的
+      left = groupLeft * 4;
+      right = groupRight * 4;
+      stageIndex++;
+
+      if (stageIndex < 3) {
+        updateStatus();
+        generateSticks(left + right);
+        nextStageBtn.disabled = true;
+        countDiv.textContent = `左側：0，右側：0`;
+        container.addEventListener('click', handleSplit);
+      } else {
+        results.push({ round: roundIndex + 1, leftGroups: groupLeft, rightGroups: groupRight });
+        nextStageBtn.style.display = 'none';
+        nextRoundBtn.style.display = 'inline';
+      }
+    }
+
+    function nextRound() {
+      roundIndex++;
+      stageIndex = 0;
+      logDiv.textContent += `\n`;
+      if (roundIndex >= 6) {
+        results.forEach(r => {
+          logDiv.textContent += `第 ${r.round} 爻結果：左 ${r.leftGroups} 組，右 ${r.rightGroups} 組\n`;
+          yao[r.round] = r.leftGroups + r.rightGroups;
+        });
+
+        showHexagramResult();  // 顯示六爻
+        nextRoundBtn.style.display = 'none';
+        return;
+      }
+
+      function showHexagramResult() {
+        logDiv.textContent += `\n卦象結果如下：\n`;
+        logDiv.textContent += `第 6 爻：${yao[6]} \n`;
+        logDiv.textContent += `第 5 爻：${yao[5]} \n`;
+        logDiv.textContent += `第 4 爻：${yao[4]} \n`;
+        logDiv.textContent += `第 3 爻：${yao[3]} \n`;
+        logDiv.textContent += `第 2 爻：${yao[2]} \n`;
+        logDiv.textContent += `第 1 爻：${yao[1]} \n`;
+
+        for (let i = 6; i >= 1; i--) {
+          const val = yao[i];
+          const symbolHTML = getYaoSymbol(val);
+          result.innerHTML += `第 ${i} 爻：${val} → ${symbolHTML}`;
+
+        }
+
+        const hexagramName = getYaoName();
+        hexagramNameDiv.innerHTML = `<strong>本卦：${hexagramName}</strong>`;
+      }
+
+      function getYaoSymbol(value) {
+        if (value === 6) return '<span class="yin_yao"></span> 老陰（變）<br>';
+        if (value === 8) return '<span class="yin_yao"></span> 少陰 <br>';
+        if (value === 7) return '<span class="yang_yao"></span> 少陽<br>';
+        if (value === 9) return '<span class="yang_yao"></span> 老陽（變）<br>';
+        return '？';
+      }
+
+      function getYaoName() {
+        let yao_val = ""
+
+        for (let i = 1; i < 7; i++) {
+          const val = yao[i];
+          yao_val += yao[i] % 2 === 0 ? '0' : '1';
+        }
+
+        console.log(yao_val)
+
+
+        eight_trigram_dict = {
+          '111': '乾',
+          '000': '坤',
+          '100': '震',
+          '001': '艮',
+          '101': '離',
+          '010': '坎',
+          '110': '兌',
+          '011': '巽'
+        }
+
+        eight_trigram_type_dict = {
+          乾: '天',
+          坤: '地',
+          震: '雷',
+          艮: '山',
+          離: '火',
+          坎: '水',
+          兌: '澤',
+          巽: '風'
+        }
+
+        yao_name_dict = {'111111': '乾', '000000': '坤', '100010': '水雷屯', '010001': '山水蒙', '111010': '水天需', '010111': '天水訟', '010000': '地水師', '000010': '水地比', '111011': '風天小畜', '110111': '天澤履', '111000': '地天泰', '000111': '天地否', '101111': '天火同人', '111101': '火天大有', '001000': '地山謙', '000100': '雷地豫', '100110': '澤雷隨', '011001': '山風蠱', '110000': '地澤臨', '000011': '風地觀', '100101': '火雷噬嗑', '101001': '山火賁', '000001': '山地剝', '100000': '地雷復', '100111': '天雷無妄', '111001': '山天大畜', '100001': '山雷頤', '011110': '澤風大過', '010010': '坎', '101101': '離', '001110': '澤山咸', '011100': '雷風恆', '001111': '天山遯', '111100': '雷天大壯', '000101': '火地晉', '101000': '地火明夷', '101011': '風火家人', '110101': '火澤睽', '001010': '水山蹇', '010100': '雷水解', '110001': '山澤損', '100011': '風雷益', '111110': '澤天夬', '011111': '天風姤', '000110': '澤地萃', '011000': '地風升', '010110': '澤水困', '011010': '水風井', '101110': '澤火革', '011101': '火風鼎', '100100': '震', '001001': '艮', '001011': '風山漸', '110100': '雷澤歸妹', '101100': '雷火豐', '001101': '火山旅', '011011': '巽', '110110': '兌', '010011': '風水渙', '110010': '水澤節', '110011': '風澤中孚', '001100': '雷山小過', '101010': '水火既濟', '010101': '火水未濟'};
+        return yao_name_dict[yao_val];
+      }
+
+
+      updateStatus();
+      generateSticks(49);
+      nextStageBtn.style.display = 'inline';
+      nextStageBtn.disabled = true;
+      nextRoundBtn.style.display = 'none';
+      countDiv.textContent = '左側：0，右側：0';
+      container.addEventListener('click', handleSplit);
+    }
+
+    // 初始開始
+    updateStatus();
+    generateSticks(49);
+    container.addEventListener('click', handleSplit);
+    nextStageBtn.addEventListener('click', nextStage);
+    nextRoundBtn.addEventListener('click', nextRound);
+  </script>
+</body>
+
+</html>
