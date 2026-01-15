@@ -1,7 +1,48 @@
-# i-ching-stalk-divination
+# 易經籌策占卦 I-Ching Stalk Divination
 
-<a href="https://goescat.github.io/i-ching-stalk-divination/" target="_blank">https://goescat.github.io/i-ching-stalk-divination/</a>
+### 網頁連結 <a href="https://goescat.github.io/i-ching-stalk-divination/" target="_blank">https://goescat.github.io/i-ching-stalk-divination/</a>
 
-依照傳統籌策占卦方式取得卦象。
+<img src="https://goescat.github.io/i-ching-stalk-divination/demo_screenshot.png" height=500px>
 
-依照提示點擊籌策，將籌策分為兩堆，持續3次可得一爻，重複6次即可獲得卦象。
+## 工具介紹
+以傳統籌策占卦方式取得卦象。
+
+決定想問得問題後，依照網頁工具提示，點擊籌策，將籌策分為兩堆，持續3次可得一爻，重複6次即可獲得卦象。
+
+## 籌策占卦方式介紹
+
+1. 籌策占卦需要準備 50 根籌策，第一步是取出一根至於上方不動（如界面呈現）代表太極。
+下方可撥動的籌策為 49 根。
+
+2. 在心中想好問題，誠心的提問。
+
+3. 將 49 根籌策絡在一起，從中間分一半。
+
+4. 將左邊的籌策取出一根至於手上（程式中會將左邊絡 -1）。
+
+5. 將左邊的籌策以4根一組做計算，剩下不足4根即取出，若都沒有剩下，即取出4根（程式中會左邊絡會減去餘數，同樣餘數為0則-4）。
+
+6. 換右邊的籌策，不需取出一根，直接4根一組計算，取出的規則如上。
+
+7. 三變成一爻。因此將剩下的籌策再絡在一起，從中間分一半，如上操作再進行2次（共3次，所以程式中會引導分半3次。）
+
+8. 進行 3 次後，剩餘的組數必定為6、7、8、9其中一數。
+單數為陽爻，雙數為陰爻。9為老陽，6為老陰，將變爻。（若有變爻，程式在結果會註明。）
+此時得到1爻。
+
+9. 重複上述6次，即得6爻，也就是完整的一卦。
+
+* 具體操作影片可參考臺大開放式課程傅佩榮教授 <a href="https://www.youtube.com/watch?v=JinYjPUMc2A" target="_blank">影片</a> 示範。
+
+* 另外附上占卦方式的文獻記載供參考：
+
+  《<a href="https://ctext.org/book-of-changes/xi-ci-shang/zh#n46928" target="_blank">周易‧繫辭上</a>》：
+「大衍之數五十，其用四十有九。分而為二以象兩，掛一以象三，揲之以四以象四時，歸奇於扐以象閏。五歲再閏，故再扐而後掛。」
+「是故，四營而成易，十有八變而成卦。」
+
+
+  《<a href="https://ctext.org/book-of-changes/xi-ci-shang/zh#n46928" target="_blank">系辭上卷七</a>》：
+「是故四營而成易，分而為二，以象兩，一營也。掛一以象三，二營也。揲之以四，三營也。歸奇於扐，四營也。四營而成易，十有八變而成卦。「十有八變而成卦」者，每一爻有三變，謂初一揲，不五則九，是一變也。第二揲，不四則八，是二變也。第三揲，亦不四則八，是三變也。若三者俱多為老陰，謂初得九，第二、第三俱得八也。若三者俱少為老陽，謂初得五，第二第三，俱得四也。若兩少一多為少陰，謂初與二、三之間，或有四或有五而有八也。或有二個四而有一個九，此為兩少一多也。其兩多一少為少陽者，謂三揲之間，或有一個九，有一個八而有一個四，或有二個八，而有一個五，此為兩多一少也。如此三變既畢，乃定一爻。」
+
+## 引用資源致謝
+網頁中占卦結果卦辭、爻辭皆來自 <a href="https://ctext.org/book-of-changes/zh" target="_blank">中國哲學書電子化計劃 http://ctext.org/zh</a> 
